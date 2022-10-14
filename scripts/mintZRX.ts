@@ -13,10 +13,8 @@ async function main() {
 
   const network = await ethers.provider.getNetwork()
   console.log(network);
-  let ZRXAddress = process.env.GOERLI_ZRX_CONTRACT_ADDRESS || ''
-  if (network.name === 'main'){
-    ZRXAddress = process.env.MAIN_ZRX_CONTRACT_ADDRESS || ''
-  }
+  const ZRXAddress = process.env.MAIN_ZRX_CONTRACT_ADDRESS || ''
+
   const ZRXNFT = await ethers.getContractAt("ZRXNft", ZRXAddress);
   console.log('start mint：\n', accounts.map(a=>a.address).join('\n'));
 
@@ -45,6 +43,7 @@ async function mint(minter: Wallet | SignerWithAddress, ZRXNFT: ZRXNft) {
       return true;
     }
     await mintOne(minter, ZRXNFT)
+    await holding()
     await mintOne(minter, ZRXNFT)
     return true;
   } catch (error) {
@@ -57,9 +56,17 @@ export async function mintOne(minter: Wallet | SignerWithAddress, ZRXNFT: ZRXNft
     address: minter.address,
     apiKey: process.env.API_KEY
   }).then(res => res.data.data)
-  return ZRXNFT.connect(minter).mint(signatureRes, { value: ethers.utils.parseEther('0.0048') })
+  return ZRXNFT.connect(minter).mint(signatureRes, {
+    value: ethers.utils.parseEther('0.0048'),
+    gasPrice: 18000000000,
+  })
 }
 
+export async function holding(time = 3000) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time)
+  })
+}
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
