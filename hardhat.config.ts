@@ -25,7 +25,7 @@ const config: HardhatUserConfig = {
       accounts: process.env.PRIVATE_KEY?.replace(/\n/g, '').split(',').filter(t => t !== '')
     },
     main: {
-      url: process.env.GOERLI_URL_KEY,
+      url: process.env.MAINNET_URL_KEY,
       accounts: process.env.PRIVATE_KEY?.replace(/\n/g, '').split(',').filter(t => t !== ''),
       // gasPrice: 14000000000,
     },
